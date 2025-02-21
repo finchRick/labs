@@ -7,24 +7,27 @@
 class Income {
 
 public:
+    Income () = default;
     virtual void print();
     std::string getSource() { return source;};
     Income (std::string src, int mo);
     virtual ~Income() = default;
     void setSource(std::string s) { source = s;};
+    virtual void readline (std::stringstream& ss) = 0;
     
-private:
-    std::string source;
 protected:
+    std::string source;
     int money;
 };
 
 class Salary : public Income {
 
 public:
+    Salary () = default;
     Salary (std::string src, int mo, std::string fir, std::string dat) : Income {src, mo}, firm {fir}, date {dat} {};
     ~Salary () = default;
     void print();
+    void readline (std::stringstream& ss);
 private:
     std::string firm;
     std::string date;
@@ -33,7 +36,10 @@ private:
 class Rent : public Income {
 
 public:
+    Rent () {};
     Rent (std::string src, int mo, std::string ten) : Income{src, mo}, tenant{ten} {};
+    ~Rent () = default;
+    void readline (std::stringstream& ss);
     void print();
 private:
     std::string tenant;
@@ -61,6 +67,19 @@ Income::Income (std::string src, int mo) {
     money = mo;
 };
 
+void Rent::readline (std::stringstream& ss) {
+
+    ss >> source >> money;
+    ss >> tenant;
+
+}
+
+void Salary::readline (std::stringstream& ss) {
+
+    ss >> source >> money;
+    ss >> firm >> date;
+}
+
 
 int main() {
 
@@ -68,63 +87,21 @@ int main() {
     std::vector<Income*> line;
     std::string inp;
     while (std::getline (ft, inp)){
-        std::string singlWord;
-        int i=0;
-        for (; i<inp.length(); i++) {
-            if (inp[i] == ' ') break;
-            singlWord.push_back(inp[i]); 
+        std::stringstream ss(inp);
+        Income* ff;
+        std::string fWord;
+        ss >> fWord;
+        if (fWord == "Rent") {
+            ff = new Rent;
+            ff->readline(ss);
+        } else if (fWord == "Salary") {
+            ff = new Salary;
+            ff->readline(ss);
         }
-        if (singlWord == "Rent") {
-            std::string src, ten, mon;
-            int mo;
-            i++;
-            for (;i<inp.length(); i++) {
-                if (inp[i] == ' ') break;;
-                src.push_back(inp[i]);
-            }
-            i++;
-            for (;i<inp.length(); i++) {
-                if (inp[i] == ' ') break;;
-                mon.push_back(inp[i]);
-            }
-            mo = std::stoi(mon);
-            i++;
-            for (;i<inp.length(); i++) {
-                if (inp[i] == ' ') break;;
-                ten.push_back(inp[i]);
-            }
-            Income* fin = new Rent(src, mo, ten);
-            line.push_back(fin);
-        } else if (singlWord == "Salary") {
-            std::string src, mon, fir, dat;
-            int mo;
-            i++;
-            for (;i<inp.length(); i++) {
-                if (inp[i] == ' ') break;;
-                src.push_back(inp[i]);
-            }
-            i++;
-            for (;i<inp.length(); i++) {
-                if (inp[i] == ' ') break;;
-                mon.push_back(inp[i]);
-            }
-            mo = std::stoi(mon);
-            i++;
-            for (;i<inp.length(); i++) {
-                if (inp[i] == ' ') break;;
-                fir.push_back(inp[i]);
-            }
-            i++;
-            for (;i<inp.length(); i++) {
-                if (inp[i] == ' ') break;;
-                dat.push_back(inp[i]);
-            }
-            Income* fin = new Salary(src, mo, fir, dat);
-            line.push_back(fin);
-        }
+        line.push_back (ff);
     }
 
-    for (auto& it : line) {
+    for (Income* it : line) {
         it->print();
         std::cout << std::endl;
     }
