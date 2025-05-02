@@ -1,7 +1,7 @@
 import unittest
 from lab3 import IncomeManager, Rent, Salary
 
-class TestIncomeManager(unittest.TestCase):
+class test_IncomeManager(unittest.TestCase):
 
     def setUp(self):
         self.manager = IncomeManager()
