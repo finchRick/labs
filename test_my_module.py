@@ -6,7 +6,7 @@ class TestIncomeManager(unittest.TestCase):
     def setUp(self):
         self.manager = IncomeManager()
 
-    def test_add_and_delete_record(self):
+    def test_my_module(self):
         rent = Rent("Apartment", 5000, "Igor", "31.01.2025")
         self.manager.add(rent)
         self.assertEqual(len(self.manager.records), 1)
